@@ -3,7 +3,6 @@ package com.example.backlogtracker.UI;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.backlogtracker.R;
 import com.example.backlogtracker.database.Repository;
 import com.example.backlogtracker.entities.Game;
+import com.example.backlogtracker.entities.Playstation;
+import com.example.backlogtracker.entities.Xbox;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
@@ -41,10 +42,14 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.backlogRecyclerView);
         repository = new Repository(getApplication());
         List<Game> allGames = repository.getAllGames();
+        List<Playstation> allPlaystation = repository.getAllPlaystation();
+        List<Xbox> allXbox = repository.getAllXbox();
         final GameAdapter gameAdapter = new GameAdapter(this);
         recyclerView.setAdapter(gameAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         gameAdapter.setGames(allGames);
+        gameAdapter.setXbox(allXbox);
+        gameAdapter.setPlaystation(allPlaystation);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());

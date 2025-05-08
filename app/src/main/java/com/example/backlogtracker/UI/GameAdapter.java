@@ -19,8 +19,9 @@ import com.example.backlogtracker.entities.Xbox;
 import java.util.List;
 
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder> {
-    private Repository repository;
     private List<Game> mGames;
+    private List<Playstation> mPlaystation;
+    private List<Xbox> mXbox;
     private final Context context;
     private final LayoutInflater mInflater;
     public GameAdapter(Context context) {
@@ -30,13 +31,11 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
     class GameViewHolder extends RecyclerView.ViewHolder {
         private final TextView gameTitle;
         private final TextView gameGenre;
-        private final TextView gameTrophies;
 
         public GameViewHolder(@NonNull View itemView) {
             super(itemView);
             gameTitle = itemView.findViewById(R.id.title);
             gameGenre = itemView.findViewById(R.id.genre);
-            gameTrophies = itemView.findViewById(R.id.trophies);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -62,23 +61,11 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
     public void onBindViewHolder(@NonNull GameViewHolder holder, int position) {
         if(mGames != null) {
             Game current = mGames.get(position);
-            int trophies = 0;
-            for (Playstation p : repository.getAllPlaystation()) {
-                if (p.getGameID() == current.getGameID()) {
-                    trophies = p.getTrophies();
-                }
-            }
-            for (Xbox x : repository.getAllXbox()) {
-                if (x.getGameID() == current.getGameID()) {
-                    trophies = x.getAchievements();
-                }
-            }
 
             String name = current.getGameName();
             String genre = current.getGenre();
             holder.gameTitle.setText(name);
             holder.gameGenre.setText(genre);
-            holder.gameTrophies.setText(trophies);
         }
     }
 
@@ -93,6 +80,16 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
 
     public void setGames(List<Game> games) {
         mGames = games;
+        notifyDataSetChanged();
+    }
+
+    public void setPlaystation(List<Playstation> playstation) {
+        mPlaystation = playstation;
+        notifyDataSetChanged();
+    }
+
+    public void setXbox(List<Xbox> xbox) {
+        mXbox = xbox;
         notifyDataSetChanged();
     }
 }
