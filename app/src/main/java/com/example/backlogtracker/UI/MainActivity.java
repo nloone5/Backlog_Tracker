@@ -1,8 +1,13 @@
 package com.example.backlogtracker.UI;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,10 +24,12 @@ import com.example.backlogtracker.entities.Playstation;
 import com.example.backlogtracker.entities.Xbox;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private Repository repository;
+    private TextView searchTitle = findViewById(R.id.searchTitle);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
+        
         RecyclerView recyclerView = findViewById(R.id.backlogRecyclerView);
         repository = new Repository(getApplication());
         List<Game> allGames = repository.getAllGames();
@@ -56,6 +63,17 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        Spinner spinner = findViewById(R.id.genrePicker);
+        ArrayList<String> genreArrayList = new ArrayList<>();
+        genreArrayList.add("Pick a genre");
+        for (Game g : repository.getAllGames()) {
+            if (!genreArrayList.contains(g.getGenre())) {
+                genreArrayList.add(g.getGenre());
+            }
+        }
+        ArrayAdapter<String> genreAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, genreArrayList);
+        spinner.setAdapter(genreAdapter);
     }
 
     @Override
@@ -67,5 +85,16 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(gameAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         gameAdapter.setGames(allGames);
+
+        Spinner spinner = findViewById(R.id.genrePicker);
+        ArrayList<String> genreArrayList = new ArrayList<>();
+        genreArrayList.add("Pick a genre");
+        for (Game g : repository.getAllGames()) {
+            if (!genreArrayList.contains(g.getGenre())) {
+                genreArrayList.add(g.getGenre());
+            }
+        }
+        ArrayAdapter<String> genreAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, genreArrayList);
+        spinner.setAdapter(genreAdapter);
     }
 }

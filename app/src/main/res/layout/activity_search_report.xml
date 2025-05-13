@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Search Results for:"
-        android:layout_marginLeft="145dp"
+        android:layout_marginLeft="40dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -20,10 +20,37 @@
         android:id="@+id/searchTerm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintLeft_toRightOf="@+id/searchHead"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginLeft="5sp" />
+
+
+    <TextView
+        android:id="@+id/searchGenre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/searchHead"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginLeft="145dp"
-        android:text="Search Term" />
+        android:layout_marginLeft="40dp"
+        android:text="Genre:" />
+
+    <TextView
+        android:id="@+id/genreSearched"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@+id/searchTerm"
+        app:layout_constraintLeft_toRightOf="@+id/searchGenre"
+        android:layout_marginLeft="5sp" />
+
+    <TextView
+        android:id="@+id/dateTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:text="TextView"
+        app:layout_constraintTop_toBottomOf="@+id/searchHead"
+        app:layout_constraintRight_toRightOf="parent" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/searchRecyclerView"
@@ -32,5 +59,5 @@
         tools:layout_editor_absoluteX="1dp"
         tools:layout_editor_absoluteY="39dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchTerm"/>
+        app:layout_constraintTop_toBottomOf="@+id/searchGenre"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

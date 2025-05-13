@@ -4,7 +4,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +20,7 @@ import com.example.backlogtracker.entities.Game;
 import com.example.backlogtracker.entities.Playstation;
 import com.example.backlogtracker.entities.Xbox;
 
+import java.text.ParseException;
 import java.util.List;
 
 public class GameDetails extends AppCompatActivity {
@@ -64,7 +67,8 @@ public class GameDetails extends AppCompatActivity {
         });
 
 
-
+        RadioButton radioPlaystation = findViewById(R.id.radioPlaystation);
+        RadioButton radioXbox = findViewById(R.id.radioXbox);
         editName = findViewById(R.id.editTitle);
         editGenre = findViewById(R.id.editGenre);
         editTrophies = findViewById(R.id.editTrophies);
@@ -75,11 +79,13 @@ public class GameDetails extends AppCompatActivity {
         for (Playstation p : repository.getAllPlaystation()) {
             if (p.getGameID() == gameID) {
                 trophies = p.getTrophies();
+                radioGroup.check(R.id.radioPlaystation);
             }
         }
         for (Xbox x : repository.getAllXbox()) {
             if (x.getGameID() == gameID) {
                 trophies = x.getAchievements();
+                radioGroup.check(R.id.radioXbox);
             }
         }
 
@@ -97,64 +103,143 @@ public class GameDetails extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.saveGame) {
-            System.out.println(gameID);
-            Game game;
-            Playstation playstation;
-            Xbox xbox;
-            if (gameID == -1) {
-                if (repository.getAllGames().isEmpty()) {
-                    gameID = 1;
-                    System.out.println(gameID);
-                } else {
-                    gameID = repository.getAllGames().get(repository.getAllGames().size() - 1).getGameID() + 1;
-                }
-                game = new Game(gameID, editName.getText().toString(), editGenre.getText().toString());
-                repository.insert(game);
-                if (playstationChecked) {
-                    playstation = new Playstation(gameID, editName.getText().toString(),
-                            editGenre.getText().toString(), Integer.parseInt(editTrophies.getText().toString()));
-                    repository.insert(playstation);
-                } else if (xboxChecked) {
-                    xbox = new Xbox(gameID, editName.getText().toString(), editGenre.getText().toString(),
-                            Integer.parseInt(editTrophies.getText().toString()));
-                    repository.insert(xbox);
+            RadioGroup radioGroup = findViewById(R.id.consoleGroup);
 
-                }
-                this.finish();
-
+            if (radioGroup.getCheckedRadioButtonId() == -1) {
+                Toast.makeText(this, "Please select a console!", Toast.LENGTH_SHORT).show();
             } else {
-                game = new Game(gameID, editName.getText().toString(), editGenre.getText().toString());
-                repository.update(game);
-                if (playstationChecked) {
-                    playstation = new Playstation(gameID, editName.getText().toString(),
-                            editGenre.getText().toString(), Integer.parseInt(editTrophies.getText().toString()));
-                    repository.update(playstation);
-                } else if (xboxChecked) {
-                    xbox = new Xbox(gameID, editName.getText().toString(), editGenre.getText().toString(),
-                            Integer.parseInt(editTrophies.getText().toString()));
-                    repository.update(xbox);
+                int trophTest;
+                try {
+                    trophTest = Integer.parseInt(editTrophies.getText().toString());
+                } catch (NumberFormatException e) {
+                    Toast.makeText(this, "Please enter a number of trophies!", Toast.LENGTH_SHORT).show();
                 }
-                this.finish();
+                boolean isXbox = false;
+                boolean isPlaystation = false;
+                System.out.println(gameID);
+                Game game;
+                Playstation playstation;
+                Xbox xbox;
+                if (gameID == -1) {
+                    if (repository.getAllGames().isEmpty()) {
+                        gameID = 1;
+                        System.out.println(gameID);
+                    } else {
+                        gameID = repository.getAllGames().get(repository.getAllGames().size() - 1).getGameID() + 1;
+                    }
+
+                    for (Playstation p : repository.getAllPlaystation()) {
+                        if (p.getGameID() == gameID) {
+                            isPlaystation = true;
+                            this.finish();
+                        }
+                    }
+                    for (Xbox x : repository.getAllXbox()) {
+                        if (x.getGameID() == gameID) {
+                            isXbox = true;
+                            this.finish();
+                        }
+                    }
+
+                    game = new Game(gameID, editName.getText().toString(), editGenre.getText().toString());
+                    repository.insert(game);
+                    if (playstationChecked) {
+                        playstation = new Playstation(gameID, editName.getText().toString(),
+                                editGenre.getText().toString(), Integer.parseInt(editTrophies.getText().toString()));
+                        repository.insert(playstation);
+                        if (isXbox) {
+                            for (Xbox x : repository.getAllXbox()) {
+                                if (x.getGameID() == gameID) {
+                                    repository.delete(x);
+                                }
+                            }
+                        }
+                    } else if (xboxChecked) {
+                        xbox = new Xbox(gameID, editName.getText().toString(), editGenre.getText().toString(),
+                                Integer.parseInt(editTrophies.getText().toString()));
+                        repository.insert(xbox);
+                        if (isPlaystation) {
+                            for (Playstation p : repository.getAllPlaystation()) {
+                                if (p.getGameID() == gameID) {
+                                    repository.delete(p);
+                                }
+                            }
+                        }
+
+                    }
+                    this.finish();
+
+                } else {
+                    for (Playstation p : repository.getAllPlaystation()) {
+                        if (p.getGameID() == gameID) {
+                            isPlaystation = true;
+                            this.finish();
+                        }
+                    }
+                    for (Xbox x : repository.getAllXbox()) {
+                        if (x.getGameID() == gameID) {
+                            isXbox = true;
+                            this.finish();
+                        }
+                    }
+
+                    game = new Game(gameID, editName.getText().toString(), editGenre.getText().toString());
+                    repository.update(game);
+                    if (playstationChecked) {
+                        playstation = new Playstation(gameID, editName.getText().toString(),
+                                editGenre.getText().toString(), Integer.parseInt(editTrophies.getText().toString()));
+                        if (isPlaystation) {
+                            repository.update(playstation);
+                        } else {
+                            repository.insert(playstation);
+                            if (isXbox) {
+                                for (Xbox x : repository.getAllXbox()) {
+                                    if (x.getGameID() == gameID) {
+                                        repository.delete(x);
+                                    }
+                                }
+                            }
+                        }
+                    } else if (xboxChecked) {
+                        xbox = new Xbox(gameID, editName.getText().toString(), editGenre.getText().toString(),
+                                Integer.parseInt(editTrophies.getText().toString()));
+                        if (isXbox) {
+                            repository.update(xbox);
+                        } else {
+                            repository.insert(xbox);
+                            if (isPlaystation) {
+                                for (Playstation p : repository.getAllPlaystation()) {
+                                    if (p.getGameID() == gameID) {
+                                        repository.delete(p);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    this.finish();
+                }
             }
         }
+
         if (item.getItemId() == R.id.deleteGame) {
-            for (Game game : repository.getAllGames()) {
-                if (game.getGameID() == gameID) {
-                    currentGame = game;
+            System.out.println("Delete");
+            for (Game g : repository.getAllGames()) {
+                if (g.getGameID() == gameID) {
+                    currentGame = g;
                 }
             }
             for (Playstation p : repository.getAllPlaystation()) {
-                if (currentGame.getGameID() == p.getGameID()) {
+                if (p.getGameID() == gameID) {
                     repository.delete(p);
                 }
             }
-            for (Xbox x : repository.getAllXbox()) {
-                if (currentGame.getGameID() == x.getGameID()) {
+            for (Xbox x: repository.getAllXbox()) {
+                if (x.getGameID() == gameID) {
                     repository.delete(x);
                 }
             }
             repository.delete(currentGame);
-            GameDetails.this.finish();
+            this.finish();
         }
         return true;
     }

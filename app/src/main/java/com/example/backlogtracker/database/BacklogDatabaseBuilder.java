@@ -13,7 +13,7 @@ import com.example.backlogtracker.entities.Game;
 import com.example.backlogtracker.entities.Playstation;
 import com.example.backlogtracker.entities.Xbox;
 
-@Database(entities = {Game.class, Playstation.class, Xbox.class}, version = 1, exportSchema = false)
+@Database(entities = {Game.class, Playstation.class, Xbox.class}, version = 2, exportSchema = false)
 public abstract class BacklogDatabaseBuilder extends RoomDatabase {
     public abstract GameDAO gameDAO();
     public abstract PlaystationDAO playstationDAO();
