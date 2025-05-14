@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,13 +30,27 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private Repository repository;
-    private TextView searchTitle = findViewById(R.id.searchTitle);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+
+        TextView searchTitle = findViewById(R.id.searchTitle);
+        repository = new Repository(getApplication());
+
+        Spinner spinner = findViewById(R.id.genrePicker);
+        ArrayList<String> genreArrayList = new ArrayList<>();
+        genreArrayList.add("Pick a genre");
+        for (Game g : repository.getAllGames()) {
+            if (!genreArrayList.contains(g.getGenre())) {
+                genreArrayList.add(g.getGenre());
+            }
+        }
+        ArrayAdapter<String> genreAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, genreArrayList);
+        spinner.setAdapter(genreAdapter);
+
 
         FloatingActionButton button = findViewById(R.id.floatingActionButton);
         button.setOnClickListener(new View.OnClickListener() {
@@ -45,9 +60,29 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        Button searchButton = findViewById(R.id.searchButton);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String title = searchTitle.getText().toString().trim();
+                String genre = spinner.getSelectedItem().toString();
+                Intent intent = new Intent(MainActivity.this, SearchReport.class);
+                if (!title.isEmpty()) {
+                    intent.putExtra("title", title);
+                }
+                if (!genre.isEmpty()) {
+                    intent.putExtra("genre", genre);
+                }
+                if (!title.isEmpty() || !genre.isEmpty()) {
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(MainActivity.this, "You must enter a title or genre!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         
         RecyclerView recyclerView = findViewById(R.id.backlogRecyclerView);
-        repository = new Repository(getApplication());
         List<Game> allGames = repository.getAllGames();
         List<Playstation> allPlaystation = repository.getAllPlaystation();
         List<Xbox> allXbox = repository.getAllXbox();
@@ -63,17 +98,6 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
-        Spinner spinner = findViewById(R.id.genrePicker);
-        ArrayList<String> genreArrayList = new ArrayList<>();
-        genreArrayList.add("Pick a genre");
-        for (Game g : repository.getAllGames()) {
-            if (!genreArrayList.contains(g.getGenre())) {
-                genreArrayList.add(g.getGenre());
-            }
-        }
-        ArrayAdapter<String> genreAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, genreArrayList);
-        spinner.setAdapter(genreAdapter);
     }
 
     @Override
@@ -88,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
         Spinner spinner = findViewById(R.id.genrePicker);
         ArrayList<String> genreArrayList = new ArrayList<>();
-        genreArrayList.add("Pick a genre");
+        genreArrayList.add("");
         for (Game g : repository.getAllGames()) {
             if (!genreArrayList.contains(g.getGenre())) {
                 genreArrayList.add(g.getGenre());
