@@ -15,11 +15,13 @@
         <activity
             android:name=".UI.SearchReport"
             android:exported="false"
-            android:label="Search Results" />
+            android:label="Search Results Report"
+            android:parentActivityName=".UI.MainActivity"/>
         <activity
             android:name=".UI.GameDetails"
             android:exported="false"
-            android:label="Game Details" />
+            android:label="Game Details"
+            android:parentActivityName=".UI.MainActivity"/>
         <activity
             android:name=".UI.MainActivity"
             android:exported="true"
